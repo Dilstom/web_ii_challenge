@@ -67,6 +67,19 @@ server.put('/api/zoos/:id', async (req, res) => {
  }
 });
 
+const errors = {
+ '19': 'Another record with that value exists',
+};
+
+server.post('/api/zoos', async (req, res) => {
+ try {
+  const [id] = await db('zoos').insert(req.body);
+  const type = await db('zoos').where({ id });
+  res.status(201).json(type);
+ } catch (error) {
+  res.status(500).json({ message: errors[error.errno] });
+ }
+});
 
 const port = 3300;
 server.listen(port, function() {
